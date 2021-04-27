@@ -1,0 +1,16 @@
+$primary-color: white;
+$bg: black;
+h1 {
+  color: $primary-color;
+  background-color: $bg;
+}
+
+canvas {
+  display: block;
+}
+
+html,
+body {
+  padding: 0;
+  margin: 0;
+}
