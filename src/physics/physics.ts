@@ -51,6 +51,8 @@ export const physicsSketch = (p5: p5) => {
   let moverNoFriction: Mover
   let moverFriction: Mover
 
+  let attracted: Mover
+
   let previous: number;
   let elapsed: number;
   let time: number;
@@ -63,6 +65,10 @@ export const physicsSketch = (p5: p5) => {
 
   const airResistCoeff = -.1;
 
+  const G = 10;
+
+  let mouse: Vector
+
   p5.setup = () => {
     p5.createCanvas(width, height);
     const p0 = p5.createVector(10, 0);
@@ -74,12 +80,16 @@ export const physicsSketch = (p5: p5) => {
     slider = new Mover(mass, p1, v1);
 
     const p2 = p5.createVector(50, 0);
-    const p3 = p5.createVector(90, 0);
     const v2 = p5.createVector(0, 100);
-    const v3 = p5.createVector(0, 100);
-
     moverNoFriction = new Mover(mass, p2, v2);
+    
+    const p3 = p5.createVector(90, 0);
+    const v3 = p5.createVector(0, 100);
     moverFriction = new Mover(mass, p3, v3);
+
+    const p4 = p5.createVector(90, 90);
+    const v4 = p5.createVector(0, 0);
+    attracted = new Mover(mass, p4, v4);
 
     p5.fill("red");
     p5.noStroke();
@@ -111,7 +121,16 @@ export const physicsSketch = (p5: p5) => {
 
     moverNoFriction.update(elapsed);
 
+    mouse = p5.createVector(p5.mouseX, p5.mouseY)
 
+    const attractionVect = Vector.sub(mouse, attracted.position)
+    
+    const magnitude = G * attracted.mass * attracted.mass * 2000000 / attractionVect.magSq()
+
+    attractionVect.normalize().mult(p5.constrain(magnitude, 0, 1000))
+    
+    attracted.applyForce(attractionVect)
+    attracted.update(elapsed)
 
     p5.circle(faller.position.x, faller.position.y, 30);
     p5.circle(slider.position.x, slider.position.y, 30);
@@ -119,6 +138,8 @@ export const physicsSketch = (p5: p5) => {
     p5.circle(moverFriction.position.x, moverFriction.position.y, 30);
 
     p5.circle(moverNoFriction.position.x, moverNoFriction.position.y, 30);
+
+    p5.circle(attracted.position.x, attracted.position.y, 30);
 
     if (
       faller.position.x > width ||
