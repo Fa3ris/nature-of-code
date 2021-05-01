@@ -8,7 +8,7 @@ export const physicsSketch = (p5: p5) => {
     private _m: number;
 
     get position() {
-      return this._position;
+      return this._position.copy();
     }
 
     set position(pos: Vector) {
@@ -16,7 +16,7 @@ export const physicsSketch = (p5: p5) => {
     }
 
     get velocity() {
-      return this._velocity;
+      return this._velocity.copy();
     }
 
     get mass() {
@@ -48,6 +48,9 @@ export const physicsSketch = (p5: p5) => {
   let faller: Mover;
   let slider: Mover;
 
+  let moverNoFriction: Mover
+  let moverFriction: Mover
+
   let previous: number;
   let elapsed: number;
   let time: number;
@@ -56,7 +59,9 @@ export const physicsSketch = (p5: p5) => {
   const mass = 200;
   const weight = gravity.mult(mass);
 
-  const frictionCoeff = -1000;
+  const frictionCoeff = -10;
+
+  const airResistCoeff = -.1;
 
   p5.setup = () => {
     p5.createCanvas(width, height);
@@ -67,6 +72,14 @@ export const physicsSketch = (p5: p5) => {
     const p1 = p5.createVector(10, height / 2);
     const v1 = p5.createVector(70, 0);
     slider = new Mover(mass, p1, v1);
+
+    const p2 = p5.createVector(50, 0);
+    const p3 = p5.createVector(90, 0);
+    const v2 = p5.createVector(0, 100);
+    const v3 = p5.createVector(0, 100);
+
+    moverNoFriction = new Mover(mass, p2, v2);
+    moverFriction = new Mover(mass, p3, v3);
 
     p5.fill("red");
     p5.noStroke();
@@ -84,13 +97,28 @@ export const physicsSketch = (p5: p5) => {
 
     faller.update(elapsed);
 
-    const friction = slider.velocity.copy();
+    const friction = slider.velocity;
     friction.normalize().mult(frictionCoeff);
     slider.applyForce(friction);
     slider.update(elapsed)
 
+    const airFriction = moverFriction.velocity;
+    const speed = airFriction.magSq();
+    airFriction.normalize().mult(airResistCoeff * speed);
+
+    moverFriction.applyForce(airFriction);
+    moverFriction.update(elapsed);
+
+    moverNoFriction.update(elapsed);
+
+
+
     p5.circle(faller.position.x, faller.position.y, 30);
     p5.circle(slider.position.x, slider.position.y, 30);
+
+    p5.circle(moverFriction.position.x, moverFriction.position.y, 30);
+
+    p5.circle(moverNoFriction.position.x, moverNoFriction.position.y, 30);
 
     if (
       faller.position.x > width ||
