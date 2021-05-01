@@ -3,4 +3,4 @@ import { physicsSketch } from "./physics/physics";
 import { triangleSketch } from "./triangles/triangles";
 
 // new p5(triangleSketch, document.body);
-new p5(physicsSketch, document.body);
+new p5(physicsSketch);

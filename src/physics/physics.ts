@@ -15,6 +15,14 @@ export const physicsSketch = (p5: p5) => {
       this._position = pos;
     }
 
+    get velocity() {
+      return this._velocity;
+    }
+
+    get mass() {
+      return this._m
+    }
+
     constructor(m: number, p0: Vector, v0: Vector) {
       this._m = m;
       this._position = p0;
@@ -37,7 +45,8 @@ export const physicsSketch = (p5: p5) => {
   const width = 800;
   const height = 600;
 
-  let mover: Mover;
+  let faller: Mover;
+  let slider: Mover;
 
   let previous: number;
   let elapsed: number;
@@ -47,12 +56,17 @@ export const physicsSketch = (p5: p5) => {
   const mass = 200;
   const weight = gravity.mult(mass);
 
+  const frictionCoeff = -1000;
+
   p5.setup = () => {
     p5.createCanvas(width, height);
-    p5.frameRate(24);
     const p0 = p5.createVector(10, 0);
     const v0 = p5.createVector(70, 0);
-    mover = new Mover(mass, p0, v0);
+    faller = new Mover(mass, p0, v0);
+
+    const p1 = p5.createVector(10, height / 2);
+    const v1 = p5.createVector(70, 0);
+    slider = new Mover(mass, p1, v1);
 
     p5.fill("red");
     p5.noStroke();
@@ -66,22 +80,30 @@ export const physicsSketch = (p5: p5) => {
 
     elapsed = (time - previous) / 1000; // in seconds
 
-    mover.applyForce(weight);
+    faller.applyForce(weight);
 
-    mover.update(elapsed);
+    faller.update(elapsed);
+
+    const friction = slider.velocity.copy();
+    friction.normalize().mult(frictionCoeff);
+    slider.applyForce(friction);
+    slider.update(elapsed)
+
+    p5.circle(faller.position.x, faller.position.y, 30);
+    p5.circle(slider.position.x, slider.position.y, 30);
 
     if (
-      mover.position.x > width ||
-      mover.position.x < 0 ||
-      mover.position.y < 0 ||
-      mover.position.y > height
+      faller.position.x > width ||
+      faller.position.x < 0 ||
+      faller.position.y < 0 ||
+      faller.position.y > height
     ) {
       console.log("no draw");
       p5.noLoop();
     } else {
-      p5.circle(mover.position.x, mover.position.y, 30);
+
+      previous = time;
     }
 
-    previous = time;
   };
 };
