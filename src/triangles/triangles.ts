@@ -1,69 +1,67 @@
 import p5, { Vector } from "p5";
 
-
 export const triangleSketch = (p5: p5) => {
-
   const white = p5.color("white");
   const red = p5.color("red");
 
   const backX = -20;
   const backY = 20;
-  
+
   let offScreen: p5.Graphics;
 
   const triangleShape: TriangleShape = {
     a: p5.createVector(10, 0),
     b: p5.createVector(backX, backY),
-    c: p5.createVector(backX, -backY)
-  }
+    c: p5.createVector(backX, -backY),
+  };
 
   let previous: number;
   let elapsed: number;
   let time: number;
 
-  p5.setup = () => {
-    p5.createCanvas(p5.windowWidth, p5.windowHeight);
-    p5.frameRate(24)
+  const width = 800;
+  const height = 600;
 
-    offScreen = p5.createGraphics(p5.windowWidth, p5.windowHeight)
+  p5.setup = () => {
+    const renderer = p5.createCanvas(width, height);
+
+    renderer.class("background");
+
+    p5.noLoop();
+    offScreen = p5.createGraphics(width, height);
     offScreen.fill(white);
     offScreen.stroke(red);
-    offScreen.strokeWeight(.75);
+    offScreen.strokeWeight(0.75);
 
-    
-    for (let i = 0; i < p5.windowWidth; i += 10) {
-      for (let j = 0; j < p5.windowHeight; j += 10) {
-        isocelesTriangle(offScreen, p5.createVector(i, j), (i*j) % p5.TAU, triangleShape, false);
-      }   
+    for (let i = 0; i < width; i += 10) {
+      for (let j = 0; j < height; j += 10) {
+        isocelesTriangle(
+          offScreen,
+          p5.createVector(i, j),
+          (i * j) % p5.TAU,
+          triangleShape,
+          false
+        );
+      }
     }
-    previous = performance.now()
+    previous = performance.now();
   };
-
-
-  p5.windowResized = () => {
-    p5.resizeCanvas(p5.windowWidth, p5.windowHeight);
-  };
-
 
   p5.draw = () => {
-
     time = performance.now();
 
-    console.log("fps", p5.frameRate());
-    
     elapsed = time - previous;
-    console.log("elapsed ms", elapsed);
-    
-    previous = time
+
+    previous = time;
     p5.clear();
 
-    p5.image(offScreen, 0, 0)
+    p5.image(offScreen, 0, 0);
   };
 
   p5.mouseClicked = () => {
     console.log("draw called");
     p5.draw();
-  }
+  };
 };
 
 function equilateralTriangle(
@@ -87,7 +85,6 @@ function equilateralTriangle(
   p5.endShape();
 
   if (orientation) {
-
     p5.stroke("red");
     p5.strokeWeight(3);
     p5.line(0, 0, radius - 7, 0);
@@ -97,9 +94,9 @@ function equilateralTriangle(
 }
 
 interface TriangleShape {
-  a: Vector,
-  b: Vector,
-  c: Vector,
+  a: Vector;
+  b: Vector;
+  c: Vector;
 }
 
 function isocelesTriangle(
@@ -107,13 +104,12 @@ function isocelesTriangle(
   center: Vector,
   angle: number,
   triangleShape: TriangleShape,
-  orientation = true,
+  orientation = true
 ): void {
-
   p5.push();
   p5.translate(center.x, center.y);
   p5.rotate(angle);
-  
+
   p5.beginShape(p5.TRIANGLES);
   p5.vertex(triangleShape.a.x, triangleShape.a.y);
   p5.vertex(triangleShape.b.x, triangleShape.b.y);

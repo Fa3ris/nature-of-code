@@ -1,6 +1,11 @@
-import p5, { Color, Renderer, Vector } from "p5";
-import { physicsSketch } from "./physics/physics";
+import p5 from "p5";
+import { physicsSketch2 } from "./physics/physics2";
 import { triangleSketch } from "./triangles/triangles";
 
-// new p5(triangleSketch, document.body);
-new p5(physicsSketch);
+const container = document.createElement("div");
+container.classList.add("container");
+document.body.append(container);
+
+new p5(triangleSketch, container);
+// new p5(physicsSketch);
+new p5(physicsSketch2, container);

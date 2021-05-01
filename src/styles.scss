@@ -7,10 +7,24 @@ h1 {
 
 canvas {
   display: block;
+  position: absolute;
 }
 
 html,
 body {
   padding: 0;
   margin: 0;
+}
+
+.container {
+  display: flex;
+  justify-content: center;
+}
+
+.background {
+  z-index: auto;
+}
+
+.foreground {
+  z-index: 1;
 }
