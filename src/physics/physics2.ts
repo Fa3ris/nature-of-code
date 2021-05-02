@@ -1,3 +1,4 @@
+import { Queue } from "mnemonist";
 import p5, { Vector } from "p5";
 import { Mover } from "../mover/mover";
 
@@ -50,6 +51,11 @@ export const physicsSketch2 = (p5: p5) => {
 
   const airResistCoeff = 0.1;
 
+  const queue: Queue<Vector> = new Queue();
+
+  const maxQueue = 90;
+
+  const maxTimeFrame = 0.02;
   p5.setup = () => {
     const renderer = p5.createCanvas(width, height);
 
@@ -65,6 +71,15 @@ export const physicsSketch2 = (p5: p5) => {
     time = performance.now();
 
     elapsed = (time - previous) / 1000; // in seconds
+
+    if (elapsed > maxTimeFrame) {
+      elapsed = maxTimeFrame; //
+    }
+
+    queue.enqueue(faller.position);
+    if (queue.size > maxQueue) {
+      queue.dequeue();
+    }
 
     faller.applyWeight();
 
@@ -83,6 +98,12 @@ export const physicsSketch2 = (p5: p5) => {
 
     attracted.update(elapsed);
     attractor.update(elapsed);
+
+    queue.forEach((past, index) => {
+      const color = p5.color(255, 68, 59, 0.1 + 0.5 * index);
+      p5.fill(color);
+      p5.circle(past.x, past.y, smallR);
+    });
 
     p5.fill(c0);
     p5.circle(faller.position.x, faller.position.y, smallR);
