@@ -11,5 +11,5 @@ document.body.append(container);
 // new p5(triangleSketch, container);
 // new p5(physicsSketch);
 // new p5(physicsSketch2, container);
-// new p5(angularMotion, container);
-new p5(curve);
+new p5(angularMotion, container);
+// new p5(curve);
