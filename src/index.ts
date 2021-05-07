@@ -1,4 +1,5 @@
 import p5 from "p5";
+import { confettiSystem } from "./circle/confetti";
 import { roundabout } from "./circle/roundabout";
 import { curve } from "./curve/curve";
 import { wave } from "./curve/wave";
@@ -18,6 +19,7 @@ document.body.append(container);
 // new p5(angularMotion, container);
 // new p5(roundabout, container);
 // new p5(spring, container);
-new p5(particleSystem, container);
+// new p5(particleSystem, container);
+new p5(confettiSystem, container);
 // new p5(wave, container);
 // new p5(curve);

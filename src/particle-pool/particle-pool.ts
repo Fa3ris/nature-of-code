@@ -1,4 +1,4 @@
-import { Vector } from "p5";
+import { Particle } from "./particle";
 
 export class ParticlePool {
   private static instance: ParticlePool | undefined;
@@ -49,13 +49,4 @@ export class ParticlePool {
   }
 }
 
-export class Particle {
-  inUse: boolean = false;
 
-  lifeSpan = 0
-  position: Vector = new Vector()
-  velocity: Vector = new Vector()
-  acceleration: Vector = new Vector()
-
-  constructor() {}
-}

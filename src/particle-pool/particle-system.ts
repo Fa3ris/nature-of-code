@@ -1,5 +1,6 @@
 import p5, { Vector } from "p5";
-import { Particle, ParticlePool } from "./particle-pool";
+import { ParticlePool } from "./particle-pool";
+import { Particle } from "./particle";
 
 export const particleSystem = (p5: p5) => {
   const width = 711;

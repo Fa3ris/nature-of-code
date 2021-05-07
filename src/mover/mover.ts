@@ -29,16 +29,20 @@ export class Mover {
     return this._velocity.copy();
   }
 
+  set velocity(newVel: Vector) {
+    this._velocity = newVel
+  }
+
   get mass() {
     return this._m;
   }
 
-  constructor(m: number, p0: Vector, v0: Vector) {
-    this._m = m;
-    this._position = p0;
-    this._velocity = v0;
-    this._acceleration = new Vector().set(0, 0, 0);
-    this._weight = Vector.mult(gravity, m);
+  constructor(m?: number, p0?: Vector, v0?: Vector) {
+    this._m = m || 10;
+    this._position = p0 || new Vector();
+    this._velocity = v0 || new Vector();
+    this._acceleration = new Vector();
+    this._weight = Vector.mult(gravity, this._m);
   }
 
   applyForce(force: Vector) {
@@ -66,6 +70,13 @@ export class Mover {
       (GRAVITATION_CST * other._m * this._m) / attractionForce.magSq();
     attractionForce.normalize().mult(magnitude);
     this.applyForce(attractionForce);
+  }
+
+  applySpringForce(k: number, anchor: Vector, restLength: number) {
+    const force = Vector.sub(this._position, anchor);
+    const displacement = force.mag() - restLength;
+    force.normalize().mult(-k * displacement);
+    this.applyForce(force);
   }
 
   update(elapsed: number) {

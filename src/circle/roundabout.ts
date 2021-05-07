@@ -36,10 +36,3 @@ export const roundabout = (p5: p5) => {
     r = baseRadius + variation * p5.sin(phasing);
   };
 };
-
-// class Round {
-
-//     private theta: number;
-//     private color: Color
-
-// }
