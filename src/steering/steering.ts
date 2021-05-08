@@ -28,7 +28,7 @@ export const steering = (p5: p5) => {
   p5.draw = () => {
     p5.background(0);
     if (seek) {
-        boyd.seek(target)
+        boyd.arrive(target)
     }
     boyd.mover.update();
     boyd.wrapEdges(p5);

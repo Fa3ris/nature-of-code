@@ -59,10 +59,31 @@ export class Boyd {
     }
   }
 
-  seek(target: Vector, maxSpeed: number = 20) {
+  seek(target: Vector, maxSpeed: number = 20, maxForce: number = 20) {
     const desired = Vector.sub(target, this.mover.position);
     desired.setMag(maxSpeed)
     const steering = Vector.sub(desired, this.mover.velocity);
+    steering.limit(maxForce)
     this.mover.applyForce(steering)
   }
+
+  arrive(target: Vector, closeDistance: number = 100, maxSpeed: number = 40, maxForce: number = 10) {
+    const desired = Vector.sub(target, this.mover.position);
+    const distance = desired.mag();
+    let limitSpeed: number;
+    if (distance < closeDistance) {
+        limitSpeed = Math.floor(this.scale(distance, 0, closeDistance, 0, maxSpeed))
+    } else {
+        limitSpeed = maxSpeed
+    }
+    desired.setMag(limitSpeed)
+    desired.normalize().mult(limitSpeed)
+    const steering = Vector.sub(desired, this.mover.velocity);
+    steering.limit(maxForce)
+    this.mover.applyForce(steering.mult(this.mover.mass))
+  }
+
+  private scale (number: number, inMin: number, inMax: number, outMin: number, outMax: number) {
+    return outMin + (((number - inMin)/(inMax - inMin)) * (outMax - outMin));
+}
 }
