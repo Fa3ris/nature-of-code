@@ -12,6 +12,8 @@ const triangleShape = {
 
 export class Boyd {
   mover: Mover = new Mover();
+  static fieldOfViewHalfAngle = Math.PI / 4
+  static fieldOfViewRadius = 30
 
   draw(p5: p5) {
     p5.push();
@@ -24,6 +26,13 @@ export class Boyd {
     p5.vertex(triangleShape.b.x, triangleShape.b.y);
     p5.vertex(triangleShape.c.x, triangleShape.c.y);
     p5.endShape();
+
+    p5.translate(triangleShape.a.x, triangleShape.a.y)
+    p5.fill(255, 50)
+    p5.noStroke()
+    p5.arc(0,0,
+      Boyd.fieldOfViewRadius, Boyd.fieldOfViewRadius,
+      -Boyd.fieldOfViewHalfAngle, Boyd.fieldOfViewHalfAngle)
 
     p5.pop();
   }
