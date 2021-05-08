@@ -68,12 +68,12 @@ export const physicsSketch = (p5: p5) => {
 
     faller.update(elapsed);
 
-    const friction = slider.velocity;
+    const friction = slider.velocity.copy();
     friction.normalize().mult(frictionCoeff);
     slider.applyForce(friction);
     slider.update(elapsed)
 
-    const airFriction = moverFriction.velocity;
+    const airFriction = moverFriction.velocity.copy();
     const speed = airFriction.magSq();
     airFriction.normalize().mult(airResistCoeff * speed);
 

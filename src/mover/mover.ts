@@ -11,26 +11,24 @@ export class Mover {
   private _m: number;
   private _weight: Vector;
 
-  /**
-   * copy of position
-   */
   get position() {
-    return this._position.copy();
+    return this._position;
   }
 
   set position(pos: Vector) {
     this._position = pos;
   }
 
-  /**
-   * copy of velocity
-   */
   get velocity() {
-    return this._velocity.copy();
+    return this._velocity;
   }
 
   set velocity(newVel: Vector) {
-    this._velocity = newVel
+    this._velocity = newVel;
+  }
+
+  get heading(): number {
+    return this._velocity.heading();
   }
 
   get mass() {
@@ -54,11 +52,11 @@ export class Mover {
   }
 
   applyFriction(frictionCoeff: number) {
-    this.applyForce(this.velocity.normalize().mult(-frictionCoeff));
+    this.applyForce(this._velocity.copy().normalize().mult(-frictionCoeff));
   }
 
   applyDrag(dragCoeff: number) {
-    const dragForce = this.velocity;
+    const dragForce = this._velocity.copy();
     const vSquared = dragForce.magSq();
     dragForce.normalize().mult(-dragCoeff * vSquared);
     this.applyForce(dragForce);
@@ -79,7 +77,7 @@ export class Mover {
     this.applyForce(force);
   }
 
-  update(elapsed: number) {
+  update(elapsed: number = .1) {
     this._acceleration.mult(elapsed / this._m);
     this._velocity.add(this._acceleration);
     this._position.add(Vector.mult(this._velocity, elapsed));
