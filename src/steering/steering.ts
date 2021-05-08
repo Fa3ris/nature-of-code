@@ -16,7 +16,9 @@ export const steering = (p5: p5) => {
 
   let futureLocation: Vector
   let wanderTarget: Vector;
-  const targetDist = 50
+  const targetDist = 10
+
+  const timeIntoFuture = 3
 
   const probability = .1
 
@@ -30,11 +32,11 @@ export const steering = (p5: p5) => {
     );
 
     wanderer.mover.position = new Vector().set(width * .75, height / 2)
-    // wanderer.mover.velocity = new Vector().set(
-      // p5.random(-10, 10),
-      // p5.random(-10, 10)
-    // );
-    futureLocation = wanderer.mover.projectFutureLocation()
+    wanderer.mover.velocity = new Vector().set(
+      p5.random(-10, 10),
+      p5.random(-10, 10)
+    );
+    futureLocation = wanderer.mover.projectFutureLocation(timeIntoFuture)
     wanderTarget = wanderer.wander(futureLocation, targetDist);
 
     p5.fill(255);
@@ -50,7 +52,7 @@ export const steering = (p5: p5) => {
 
     const pickNew = p5.random() < probability;
     if (pickNew) {
-      futureLocation = wanderer.mover.projectFutureLocation()
+      futureLocation = wanderer.mover.projectFutureLocation(timeIntoFuture)
       wanderTarget = wanderer.wander(futureLocation, targetDist);
     }
     wanderer.arrive(wanderTarget);
