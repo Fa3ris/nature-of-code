@@ -83,4 +83,8 @@ export class Mover {
     this._position.add(Vector.mult(this._velocity, elapsed));
     this._acceleration.mult(0);
   }
+
+  projectFutureLocation(elapsed: number = .1): Vector {
+    return Vector.add(this._position, Vector.mult(this._velocity, elapsed))
+  }
 }

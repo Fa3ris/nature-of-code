@@ -83,6 +83,13 @@ export class Boyd {
     this.mover.applyForce(steering.mult(this.mover.mass))
   }
 
+  wander(futureLocation: Vector, radius: number = 20): Vector {
+    const angle = Math.random() * 2*Math.PI
+    return Vector.add(futureLocation, new Vector().set(Math.cos(angle), Math.sin(angle)).mult(radius))
+  }
+
+
+
   private scale (number: number, inMin: number, inMax: number, outMin: number, outMax: number) {
     return outMin + (((number - inMin)/(inMax - inMin)) * (outMax - outMin));
 }
