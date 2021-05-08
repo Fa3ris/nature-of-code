@@ -1,6 +1,6 @@
 import p5, { Vector } from "p5";
 import { Boyd } from "../boyd/boyd";
-import { Mover } from "../mover/mover";
+import { FlowField } from "../flow-field/flow-field";
 
 export const steering = (p5: p5) => {
   const width = 711;
@@ -22,8 +22,12 @@ export const steering = (p5: p5) => {
 
   const probability = .1
 
+  const field: FlowField = new FlowField(width, height)
+
+  const offScreen = p5.createGraphics(width, height)
   p5.setup = () => {
     p5.createCanvas(width, height);
+    field.draw(offScreen)
 
     boyd.mover.position = new Vector().set(width / 2, height / 2);
     boyd.mover.velocity = new Vector().set(
@@ -46,6 +50,7 @@ export const steering = (p5: p5) => {
   
   p5.draw = () => {
     p5.background(0);
+    p5.image(offScreen, 0, 0)
     if (seek) {
         boyd.arrive(target)
     }
