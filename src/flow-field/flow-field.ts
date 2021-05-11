@@ -6,28 +6,56 @@ export class FlowField {
   cols: number;
   xResolution: number;
   yResolution: number;
+  width: number
+  height: number
 
   constructor(
+    p5: p5,
     width: number = 711,
     height: number = 400,
     xRes: number = 20,
-    yRes: number = 20
+    yRes: number = 20,
+    layout: "noise"| "center" = "noise"
   ) {
     this.cols = Math.ceil(width / xRes);
     this.rows = Math.ceil(height / yRes);
     this.xResolution = xRes;
     this.yResolution = yRes;
+    this.width = width
+    this.height = height
     this.field = new Array(this.rows);
-    const canvasCenter = new Vector().set(width / 2, height / 2);
+    if (layout === 'noise') {
+        this.noiseLayout(p5)
+    } else {
+        this.pointToCenter()
+    }
+  }
+
+  private noiseLayout(p5: p5) {
     for (let row = 0; row < this.rows; row++) {
-      this.field[row] = new Array(this.cols);
-      for (let col = 0; col < this.cols; col++) {
-        const caseCenter = new Vector().set(
-          col * this.xResolution + this.xResolution / 2,
-          row * this.yResolution + this.yResolution / 2
-        );
-        this.field[row][col] = Vector.sub(canvasCenter, caseCenter);
+        this.field[row] = new Array(this.cols);
+        for (let col = 0; col < this.cols; col++) {
+            
+          const newRow = p5.map(row, 0, this.rows, 0, 2)
+          const newCol =  p5.map(col, 0, this.cols, 0, 2)
+  
+          const theta = p5.map(p5.noise(newCol, newRow), 0, 1, 0, p5.TAU)
+          this.field[row][col] =  new Vector().set(p5.cos(theta), p5.sin(theta))
+        }
       }
+  }
+
+  private pointToCenter() {
+    const canvasCenter = new Vector().set(this.width / 2, this.height / 2);
+    for (let row = 0; row < this.rows; row++) {
+        this.field[row] = new Array(this.cols);
+        for (let col = 0; col < this.cols; col++) {
+          const caseCenter = new Vector().set(
+            col * this.xResolution + this.xResolution / 2 + (Math.random() * 2),
+            row * this.yResolution + this.yResolution / 2 + (Math.random() * 2)
+          );
+          this.field[row][col] = Vector.sub(canvasCenter, caseCenter);
+        }
     }
   }
 

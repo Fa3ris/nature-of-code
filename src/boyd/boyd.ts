@@ -1,4 +1,5 @@
 import p5, { Vector } from "p5";
+import { FlowField } from "../flow-field/flow-field";
 import { Mover } from "../mover/mover";
 
 const halfTriangleHeight = 5;
@@ -70,10 +71,7 @@ export class Boyd {
 
   seek(target: Vector, maxSpeed: number = 20, maxForce: number = 20) {
     const desired = Vector.sub(target, this.mover.position);
-    desired.setMag(maxSpeed)
-    const steering = Vector.sub(desired, this.mover.velocity);
-    steering.limit(maxForce)
-    this.mover.applyForce(steering)
+    this.applyDesired(desired, maxSpeed, maxForce)
   }
 
   arrive(target: Vector, closeDistance: number = 100, maxSpeed: number = 40, maxForce: number = 10) {
@@ -95,6 +93,18 @@ export class Boyd {
   wander(futureLocation: Vector, radius: number = 20): Vector {
     const angle = Math.random() * 2*Math.PI
     return Vector.add(futureLocation, new Vector().set(Math.cos(angle), Math.sin(angle)).mult(radius))
+  }
+
+  follow(field: FlowField, maxSpeed: number = 20, maxForce: number = 20) {
+    const desired = field.lookup(this.mover.position).copy()
+    this.applyDesired(desired, maxSpeed, maxForce)
+  }
+
+  applyDesired(desired: Vector, maxSpeed: number = 20, maxForce: number = 20) {
+    desired.setMag(maxSpeed)
+    const steering = Vector.sub(desired, this.mover.velocity);
+    steering.limit(maxForce)
+    this.mover.applyForce(steering)
   }
 
 

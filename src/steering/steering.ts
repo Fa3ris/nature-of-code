@@ -11,6 +11,7 @@ export const steering = (p5: p5) => {
   const boyd = new Boyd();
 
   const wanderer = new Boyd();
+  const pathFollower = new Boyd();
 
   let seek = false;
 
@@ -22,7 +23,7 @@ export const steering = (p5: p5) => {
 
   const probability = .1
 
-  const field: FlowField = new FlowField(width, height)
+  const field: FlowField = new FlowField(p5, width, height)
 
   const offScreen = p5.createGraphics(width, height)
   p5.setup = () => {
@@ -43,6 +44,7 @@ export const steering = (p5: p5) => {
     futureLocation = wanderer.mover.projectFutureLocation(timeIntoFuture)
     wanderTarget = wanderer.wander(futureLocation, targetDist);
 
+    pathFollower.mover.position = new Vector().set(p5.random(width), p5.random(height));
     p5.fill(255);
     p5.stroke(255);
   };
@@ -51,6 +53,7 @@ export const steering = (p5: p5) => {
   p5.draw = () => {
     p5.background(0);
     p5.image(offScreen, 0, 0)
+
     if (seek) {
         boyd.arrive(target)
     }
@@ -61,15 +64,19 @@ export const steering = (p5: p5) => {
       wanderTarget = wanderer.wander(futureLocation, targetDist);
     }
     wanderer.arrive(wanderTarget);
+    pathFollower.follow(field)
 
     wanderer.mover.update()
     boyd.mover.update();
+    pathFollower.mover.update()
 
     wanderer.wrapEdges(p5)
     boyd.wrapEdges(p5);
-
+    pathFollower.wrapEdges(p5)
+    
     boyd.draw(p5);
     wanderer.draw(p5)
+    pathFollower.draw(p5)
     p5.push()
     p5.noStroke()
     p5.fill(255, 10);
