@@ -27,14 +27,12 @@ export const angleBetweenSketch = (p5: p5) => {
     p5.background(100);
     p5.image(graphics, 0, 0);
     const mousePos = new Vector().set(p5.mouseX, p5.mouseY);
-    const mouseRelativeToCanvasCenter = new Vector().set(
-      mousePos.x - canvasCenter.x,
-      mousePos.y - canvasCenter.y
-    );
+    const mouseRelativeToCanvasCenter = Vector.sub(mousePos, canvasCenter)
     mouseRelativeToCanvasCenter.setMag(lineLength);
-    const angle = baseLine.angleBetween(mouseRelativeToCanvasCenter);
-    p5.text(`${-angle.toFixed(numberPrecision)} radians`, 10, 20);
-    p5.text(`${-((angle * 180) / p5.PI).toFixed(numberPrecision)} degrees`, 10, 40);
+    const angleRad = mouseRelativeToCanvasCenter.angleBetween(baseLine);
+    
+    p5.text(`${angleRad.toFixed(numberPrecision)} radians`, 10, 20);
+    p5.text(`${p5.degrees(angleRad).toFixed(numberPrecision)} degrees`, 10, 40);
     p5.push();
         p5.translate(canvasCenter.x, canvasCenter.y);
         p5.push()
@@ -44,7 +42,7 @@ export const angleBetweenSketch = (p5: p5) => {
         p5.push()
             p5.noStroke()
             p5.fill(255, 100)
-            p5.arc(0, 0, lineLength, lineLength, angle, 0);
+            p5.arc(0, 0, lineLength, lineLength, -angleRad, 0);
         p5.pop()
     p5.pop();
   };
