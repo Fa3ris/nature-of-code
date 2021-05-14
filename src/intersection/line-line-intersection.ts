@@ -13,7 +13,7 @@ export class LineLineDetector {
     p2: Vector,
     p3: Vector,
     p4: Vector
-  ): Intersection {
+  ): Vector | undefined {
     const x1 = p1.x;
     const y1 = p1.y;
 
@@ -29,24 +29,23 @@ export class LineLineDetector {
     const denominator = (x1 -x2)*(y3 - y4) - (y1 - y2)*(x3 - x4)
 
     if (denominator == 0) {
-        return {}
+        return undefined
     }
 
     const interX = ((x1*y2 - y1*x2)*(x3 - x4) - (x1 - x2)*(x3*y4 - y3*x4)) / denominator
 
     const interY = ((x1*y2 - y1*x2)*(y3 - y4) - (y1 - y2)*(x3*y4 - y3*x4)) / denominator
 
-    return {x: interX, y: interY};
+    return new Vector().set(interX, interY);
   }
 
-  static intersectInsideSegment(intersect: Intersection, start: Vector, end: Vector): boolean {
+  static intersectInsideSegment(intersect: Vector, start: Vector, end: Vector): boolean {
 
-    if (!(intersect.y && intersect.y)) {
+    if (!intersect) {
         return false
     } else {
 
-      const point = new Vector().set(intersect.x, intersect.y)
-      const maybeInnerSegment = Vector.sub(point, start)
+      const maybeInnerSegment = Vector.sub(intersect, start)
 
       const segment = Vector.sub(end, start)
 

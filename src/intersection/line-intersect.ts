@@ -34,7 +34,7 @@ export const lineIntersect = (p5: p5) => {
     segment2.display(offScreen)
 
     const intersect = LineLineDetector.detectLineLine(segment.start, segment.end, segment2.start, segment2.end)
-    if (intersect.x && intersect.y) {
+    if (intersect) {
 
         const overFlowX = intersect.x < 0 || intersect.x > width
         const overFlowY = intersect.y < 0 || intersect.y > height
@@ -60,7 +60,8 @@ export const lineIntersect = (p5: p5) => {
             offScreen.point(intersect.x, intersect.y)
             offScreen.pop()
         }
-        
+        offScreen.textSize
+      offScreen.text(`x: ${intersect.x.toFixed(2)} y: ${intersect.y.toFixed(2)}`, 10, 10 + offScreen.textSize())  
     }
   };
 
