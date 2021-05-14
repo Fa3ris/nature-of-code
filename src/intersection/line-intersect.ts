@@ -20,14 +20,6 @@ export const lineIntersect = (p5: p5) => {
 
   const offScreen = p5.createGraphics(width, height)
 
-  const boyd = new Boyd();
-
-  boyd.mover.position = new Vector().set(p5.random(width), p5.random(height));
-    boyd.mover.velocity = new Vector().set(
-      p5.random(-10, 10),
-      p5.random(-10, 10)
-    );
-
   p5.setup = () => {
     p5.createCanvas(width, height);
     segment.display(offScreen)
@@ -60,7 +52,6 @@ export const lineIntersect = (p5: p5) => {
             offScreen.point(intersect.x, intersect.y)
             offScreen.pop()
         }
-        offScreen.textSize
       offScreen.text(`x: ${intersect.x.toFixed(2)} y: ${intersect.y.toFixed(2)}`, 10, 10 + offScreen.textSize())  
     }
   };
