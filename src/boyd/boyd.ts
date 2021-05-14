@@ -2,7 +2,6 @@ import p5, { Vector } from "p5";
 import { FlowField } from "../flow-field/flow-field";
 import { Mover } from "../mover/mover";
 import { Segment } from "../path/segment";
-import { pathFollowing } from "../steering/path.following";
 
 const halfTriangleHeight = 5;
 const halfTriangleBase = 3;
@@ -15,9 +14,9 @@ const triangleShape = {
 
 export class Boyd {
   mover: Mover = new Mover();
-  static fieldOfViewHalfAngle = Math.PI / 4
-  static fieldOfViewRadius = 30
-
+  static fieldOfViewHalfAngle = Math.PI / 4;
+  static fieldOfViewRadius = 30;
+  static interpolation = 25;
   draw(p5: p5) {
     p5.push();
 
@@ -30,12 +29,17 @@ export class Boyd {
     p5.vertex(triangleShape.c.x, triangleShape.c.y);
     p5.endShape();
 
-    p5.translate(triangleShape.a.x, triangleShape.a.y)
-    p5.fill(255, 50)
-    p5.noStroke()
-    p5.arc(0,0,
-      Boyd.fieldOfViewRadius, Boyd.fieldOfViewRadius,
-      -Boyd.fieldOfViewHalfAngle, Boyd.fieldOfViewHalfAngle)
+    p5.translate(triangleShape.a.x, triangleShape.a.y);
+    p5.fill(255, 50);
+    p5.noStroke();
+    p5.arc(
+      0,
+      0,
+      Boyd.fieldOfViewRadius,
+      Boyd.fieldOfViewRadius,
+      -Boyd.fieldOfViewHalfAngle,
+      Boyd.fieldOfViewHalfAngle
+    );
 
     p5.pop();
   }
@@ -73,71 +77,94 @@ export class Boyd {
 
   seek(target: Vector, maxSpeed: number = 20, maxForce: number = 20) {
     const desired = Vector.sub(target, this.mover.position);
-    this.applyDesired(desired, maxSpeed, maxForce)
+    this.applyDesired(desired, maxSpeed, maxForce);
   }
 
-  arrive(target: Vector, closeDistance: number = 100, maxSpeed: number = 40, maxForce: number = 10) {
+  arrive(
+    target: Vector,
+    closeDistance: number = 100,
+    maxSpeed: number = 40,
+    maxForce: number = 10
+  ) {
     const desired = Vector.sub(target, this.mover.position);
     const distance = desired.mag();
     let limitSpeed: number;
     if (distance < closeDistance) {
-        limitSpeed = Math.floor(this.scale(distance, 0, closeDistance, 0, maxSpeed))
+      limitSpeed = Math.floor(
+        this.scale(distance, 0, closeDistance, 0, maxSpeed)
+      );
     } else {
-        limitSpeed = maxSpeed
+      limitSpeed = maxSpeed;
     }
-    desired.setMag(limitSpeed)
-    desired.normalize().mult(limitSpeed)
+    desired.setMag(limitSpeed);
+    desired.normalize().mult(limitSpeed);
     const steering = Vector.sub(desired, this.mover.velocity);
-    steering.limit(maxForce)
-    this.mover.applyForce(steering.mult(this.mover.mass))
+    steering.limit(maxForce);
+    this.mover.applyForce(steering.mult(this.mover.mass));
   }
 
   wander(futureLocation: Vector, radius: number = 20): Vector {
-    const angle = Math.random() * 2*Math.PI
-    return Vector.add(futureLocation, new Vector().set(Math.cos(angle), Math.sin(angle)).mult(radius))
+    const angle = Math.random() * 2 * Math.PI;
+    return Vector.add(
+      futureLocation,
+      new Vector().set(Math.cos(angle), Math.sin(angle)).mult(radius)
+    );
   }
 
   follow(field: FlowField, maxSpeed: number = 20, maxForce: number = 20) {
-    const desired = field.lookup(this.mover.position).copy()
-    this.applyDesired(desired, maxSpeed, maxForce)
+    const desired = field.lookup(this.mover.position).copy();
+    this.applyDesired(desired, maxSpeed, maxForce);
   }
 
   applyDesired(desired: Vector, maxSpeed: number = 20, maxForce: number = 20) {
-    desired.setMag(maxSpeed)
-    const steering = Vector.sub(desired, this.mover.velocity);
-    steering.limit(maxForce)
-    this.mover.applyForce(steering)
+    desired.setMag(maxSpeed);
+    desired.sub(this.mover.velocity);
+    desired.limit(maxForce);
+    this.mover.applyForce(desired);
   }
 
-
-
-  private scale (number: number, inMin: number, inMax: number, outMin: number, outMax: number) {
-    return outMin + (((number - inMin)/(inMax - inMin)) * (outMax - outMin));
-}
-
-  private static interpolation = 25
-
+  private scale(
+    number: number,
+    inMin: number,
+    inMax: number,
+    outMin: number,
+    outMax: number
+  ) {
+    return outMin + ((number - inMin) / (inMax - inMin)) * (outMax - outMin);
+  }
 
   followSegment(segment: Segment): Vector | undefined {
+    const advanceByInterpolation = this.mover.velocity
+      .copy()
+      .normalize()
+      .mult(Boyd.interpolation);
+    const futureLocation = Vector.add(
+      this.mover.position,
+      advanceByInterpolation
+    );
 
-    const advanceByInterpolation = this.mover.velocity.copy().normalize().mult(Boyd.interpolation)
-    const futureLocation = Vector.add(this.mover.position, advanceByInterpolation)
+    const futureLocationRelativeToStart = Vector.sub(
+      futureLocation,
+      segment.start
+    );
 
-    const futureLocationRelativeToStart = Vector.sub(futureLocation, segment.start)
+    const scalarProjection = Vector.mult(
+      segment.direction,
+      futureLocationRelativeToStart.dot(segment.direction)
+    );
 
-    const scalarProjection = Vector.mult(segment.direction, futureLocationRelativeToStart.dot(segment.direction))
-
-    const normalPoint = Vector.add(segment.start, scalarProjection)
+    const normalPoint = Vector.add(segment.start, scalarProjection);
 
     if (Vector.dist(futureLocation, normalPoint) > segment.halfWidth) {
+      const pointToSeek = Vector.add(
+        normalPoint,
+        segment.direction.copy().mult(Boyd.interpolation)
+      );
 
-      const pointToSeek = Vector.add(normalPoint, segment.direction.copy().mult(Boyd.interpolation))
-
-      this.seek(pointToSeek, 30, 400)
+      this.seek(pointToSeek, 30, 400);
 
       return pointToSeek;
     }
-    return undefined
-
+    return undefined;
   }
 }
