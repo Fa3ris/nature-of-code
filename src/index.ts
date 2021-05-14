@@ -8,6 +8,7 @@ import { particleSystem } from "./particle-pool/particle-system";
 import { angularMotion } from "./physics/angular-motion";
 import { physicsSketch2 } from "./physics/physics2";
 import { spring } from "./physics/spring";
+import { pathFollowing } from "./steering/path.following";
 import { steering } from "./steering/steering";
 import { triangleSketch } from "./triangles/triangles";
 
@@ -24,6 +25,7 @@ document.body.append(container);
 // new p5(particleSystem, container);
 // new p5(confettiSystem, container);
 // new p5(steering, container);
-new p5(angleBetweenSketch, container);
+// new p5(angleBetweenSketch, container);
+new p5(pathFollowing, container);
 // new p5(wave, container);
 // new p5(curve);

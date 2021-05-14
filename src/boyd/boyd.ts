@@ -1,6 +1,8 @@
 import p5, { Vector } from "p5";
 import { FlowField } from "../flow-field/flow-field";
 import { Mover } from "../mover/mover";
+import { Segment } from "../path/segment";
+import { pathFollowing } from "../steering/path.following";
 
 const halfTriangleHeight = 5;
 const halfTriangleBase = 3;
@@ -112,4 +114,30 @@ export class Boyd {
   private scale (number: number, inMin: number, inMax: number, outMin: number, outMax: number) {
     return outMin + (((number - inMin)/(inMax - inMin)) * (outMax - outMin));
 }
+
+  private static interpolation = 25
+
+
+  followSegment(segment: Segment): Vector | undefined {
+
+    const advanceByInterpolation = this.mover.velocity.copy().normalize().mult(Boyd.interpolation)
+    const futureLocation = Vector.add(this.mover.position, advanceByInterpolation)
+
+    const futureLocationRelativeToStart = Vector.sub(futureLocation, segment.start)
+
+    const scalarProjection = Vector.mult(segment.direction, futureLocationRelativeToStart.dot(segment.direction))
+
+    const normalPoint = Vector.add(segment.start, scalarProjection)
+
+    if (Vector.dist(futureLocation, normalPoint) > segment.halfWidth) {
+
+      const pointToSeek = Vector.add(normalPoint, segment.direction.copy().mult(Boyd.interpolation))
+
+      this.seek(pointToSeek, 30, 400)
+
+      return pointToSeek;
+    }
+    return undefined
+
+  }
 }
