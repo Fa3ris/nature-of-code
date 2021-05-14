@@ -167,4 +167,12 @@ export class Boyd {
     }
     return undefined;
   }
+
+  flee(target: Vector, desiredSeparation = 10, maxSpeed: number = 30, maxForce: number = 20) {
+    if (Vector.dist(this.mover.position, target) <= desiredSeparation) {
+    this.applyDesired(Vector.sub(this.mover.position, target), maxSpeed, maxForce);
+    }
+  }
+
+
 }
