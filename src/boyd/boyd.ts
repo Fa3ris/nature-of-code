@@ -169,9 +169,23 @@ export class Boyd {
   }
 
   flee(target: Vector, desiredSeparation = 10, maxSpeed: number = 30, maxForce: number = 20) {
-    if (Vector.dist(this.mover.position, target) <= desiredSeparation) {
-    this.applyDesired(Vector.sub(this.mover.position, target), maxSpeed, maxForce);
+    if (Vector.dist(this.mover.position, target) < desiredSeparation) {
+      this.applyDesired(Vector.sub(this.mover.position, target), maxSpeed, maxForce);
     }
+  }
+
+  stayClose(target: Vector, desiredSeparation = 10, maxSpeed: number = 30, maxForce: number = 20) {
+    if (Vector.dist(this.mover.position, target) > desiredSeparation) {
+      this.applyDesired(Vector.sub(target, this.mover.position), maxSpeed, maxForce);
+    }
+  }
+
+  circleAround(target: Vector, r: number = 20, dTheta:number = .5): Vector {
+    const newAngleBetween =  Vector.sub(this.mover.position, target).heading() - dTheta;
+    const newPoint = new Vector().set(Math.cos(newAngleBetween), Math.sin(newAngleBetween)).mult(r)
+    const newTarget = Vector.add(target, newPoint)
+    this.arrive(newTarget)
+    return newTarget
   }
 
 

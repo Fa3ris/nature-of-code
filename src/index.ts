@@ -12,6 +12,7 @@ import { physicsSketch2 } from "./physics/physics2";
 import { spring } from "./physics/spring";
 import { fleeBehavior } from "./steering/flee";
 import { pathFollowing } from "./steering/path.following";
+import { stayAround } from "./steering/stay-around";
 import { steering } from "./steering/steering";
 import { triangleSketch } from "./triangles/triangles";
 
@@ -28,7 +29,8 @@ document.body.append(container);
 // new p5(particleSystem, container);
 // new p5(confettiSystem, container);
 // new p5(steering, container);
-new p5(fleeBehavior, container);
+// new p5(fleeBehavior, container);
+new p5(stayAround, container);
 // new p5(angleBetweenSketch, container);
 // new p5(pathFollowing, container);
 // new p5(lineIntersect, container);
