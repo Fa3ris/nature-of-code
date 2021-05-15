@@ -42,10 +42,13 @@ export const stayAround = (p5: p5) => {
     return boyd;
   }
 
-  function randomDistAndDtheta(): {r: number, dTheta: number} {
+  function randomDistAndDtheta(lowerRadius: number = 20, upperRadius: number  = 70): {r: number, dTheta: number,} {
+
+    const radius = p5.random(lowerRadius, upperRadius)
+    const angle2 = p5.constrain(1/ radius, .5, 1) 
     return {
-      r: p5.random(20, 70),
-      dTheta: p5.random(.5, 1) * (p5.random() < .5 ? 1 : -1)
+      r: radius,
+      dTheta: angle2 * (p5.random() < .5 ? 1 : -1)
     }
   }
 
